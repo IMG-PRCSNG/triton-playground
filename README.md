@@ -5,9 +5,10 @@ Personal collection of examples and scripts for working with [NVIDIA Triton Infe
 ## Pre-requisites
 
 - NVIDIA GPU (Compute >= 6) and NVIDIA Driver >= 510
-- Docker
-- Docker compose
-- Python 3.8
+- [Conda](https://docs.conda.io/projects/conda/en/latest/)
+- [Docker](https://docs.docker.com/get-docker/)
+- [NVIDIA Container toolkit] (https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+- [Docker compose](https://docs.docker.com/compose/install/)
 
 ## Python backend
 
@@ -19,12 +20,15 @@ Python backend in Triton Inference Server allows us to write custom python funct
 conda env create -f environment.yml
 conda activate triton
 conda install conda-pack
-conda pack # Creates triton.tar.gz
 
+# Packs the environment into triton.tar.gz, will take a while
+conda pack
+
+mv triton.tar.gz models/
 # Model
-cp triton.tar.gz models/
+wget "https://dl.fbaipublicfiles.com/detectron2/COCO-Detection/faster_rcnn_R_50_FPN_3x/137849458/model_final_280758.pkl" -O models/test/1/model.pkl
 
-docker-compose up serving
+docker-compose up triton
 ```
 
 Once the server is up (should take a while to load the model), you can now use the client

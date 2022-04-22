@@ -39,13 +39,16 @@ from detectron2.config import get_cfg
 from detectron2.engine import DefaultPredictor
 
 
-def setup_cfg():
+def setup_cfg(model_folder: Path):
     _model = 'COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml'
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file(_model))
 
     # MODIFY CONFIG AS NEEDED
-    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(_model)
+    # config_file = f'{model_folder / "config.yaml"}'
+    # cfg.merge_from_file(config_file)
+
+    cfg.MODEL.WEIGHTS = f'{model_folder / "model.pkl"}'
     return cfg
 
 
@@ -83,8 +86,8 @@ class TritonPythonModel:
         model_repo = Path(args['model_repository'])
         model_version = args['model_version']
 
-        #config_path = f'{model_repo / model_version / "config.yaml"}'
-        cfg = setup_cfg()
+        model_folder = model_repo / model_version
+        cfg = setup_cfg(model_folder)
 
         # Instantiate the PyTorch model
         self.model = DefaultPredictor(cfg)
