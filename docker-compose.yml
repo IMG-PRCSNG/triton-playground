@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  triton:
+    init: true
+    ports:
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
+
+    image: nvcr.io/nvidia/tritonserver:22.03-py3
+    command: [ "tritonserver", "--model-repository=./models"]
+    volumes:
+      - ${PWD}:/workspace/
+    working_dir: /workspace/
+    user: 1000:1000
+    environment:
+      - HOME=/workspace/
+      - LC_ALL=C.UTF-8
+      - MPLCONFIGDIR=/tmp
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+    shm_size: 2G
+    ulimits:
+      memlock: -1
+      stack: 67108864
